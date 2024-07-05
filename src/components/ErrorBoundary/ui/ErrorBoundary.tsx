@@ -1,11 +1,5 @@
-import React from 'react';
+import React, { ErrorInfo } from 'react';
 import { Error } from '../../Error/ui/Error';
-
-const logError = (error: string) =>
-  console.warn(
-    `%c Unfortunately, an error has occured! ${error} `,
-    'background: #222; color: #bada55',
-  );
 
 export interface StateType {
   hasError: boolean;
@@ -25,8 +19,8 @@ export class ErrorBoundary extends React.Component<PropsType, StateType> {
     return { hasError: true };
   }
 
-  componentDidCatch(error: Error) {
-    logError(error.toString());
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.error('Uncaught error:', error, errorInfo);
   }
 
   render() {

@@ -3,13 +3,22 @@
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+  width: 100%;
 }
 
-html, body {
+html,
+body {
   height: 100%;
 }
 
-.top-section {
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 50px;
+}
+
+.top_section {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -20,15 +29,16 @@ html, body {
   display: flex;
 }
 
-.error-button {
+.error_button_wrapper {
   position: absolute;
   top: 10px;
   right: 10px;
+}
+
+.bottom_section {
   display: flex;
-  border-radius: 5px;
-  padding: 4px 8px;
-  background: transparent;
-  color: red;
-  border: 1px solid red;
-  cursor: pointer;
+}
+
+.card {
+  background: red;
 }
