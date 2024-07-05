@@ -1,1 +1,1 @@
-npm format:fix
+npm run lint:fix
