@@ -23,7 +23,7 @@ export const getRequest = async (url: string, signal: AbortSignal) => {
   return response.json();
 };
 
-export class App extends Component<never, IState> {
+export class App extends Component {
   state: IState = {
     value: '',
     flag: false,
@@ -120,40 +120,4 @@ export class App extends Component<never, IState> {
     );
   }
 }
-// function App() {
-//   const [value, setValue] = useState('');
-
-//   const submitHandler = (e: SyntheticEvent) => {
-//     e.preventDefault();
-//   };
-
-//   useEffect(() => {
-//     const search = localStorage.getItem('search');
-//     if (search) {
-//       setValue(search);
-//     }
-//   }, []);
-
-//   useEffect(() => {
-//    localStorage.setItem('search', value);
-//   }, [value]);
-
-//   return (
-//     <div className="wrapper">
-//       <div className="top-section">
-//         <form onSubmit={(e) => submitHandler(e)} action="">
-//           <label htmlFor="" className="label">
-//             <input
-//               type="search"
-//               value={value}
-//               onChange={(e) => setValue(e.target.value)}
-//             ></input>
-//             <button type="submit">search</button>
-//           </label>
-//         </form>
-//       </div>
-//     </div>
-//   );
-// }
-
-// export default App;
+export default App;
