@@ -13,7 +13,7 @@ type IState = {
   error: boolean;
 };
 
-export const getRequest = async (url: string, signal: AbortSignal) => {
+const getRequest = async (url: string, signal: AbortSignal) => {
   const response = await fetch(url, { signal });
 
   if (!response.ok) {
