@@ -23,7 +23,7 @@ export const getRequest = async (url: string, signal: AbortSignal) => {
   return response.json();
 };
 
-export class App extends Component {
+class App extends Component {
   state: IState = {
     value: '',
     flag: false,
