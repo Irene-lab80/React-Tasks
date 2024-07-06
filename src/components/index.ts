@@ -4,3 +4,4 @@ export { Search } from './Search';
 export { ErrorButton } from './ErrorButton';
 export { Card } from './Card';
 export { CardList } from './CardList';
+export { Message } from './Message';

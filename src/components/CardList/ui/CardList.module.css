@@ -1,11 +1,19 @@
-.card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  gap: 5px;
-  width: 100%;
-  padding: 10px;
-  border: 1px solid grey;
-  border-radius: 8px;
+.list {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  padding: 0 25px;
+  gap: 20px;
+
+  @media (max-width: 900px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media (max-width: 600px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 400px) {
+    grid-template-columns: repeat(1, 1fr);
+  }
+
 }

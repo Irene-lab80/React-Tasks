@@ -1,14 +1,26 @@
 import { Component, SyntheticEvent } from 'react';
-import { Card, ErrorButton } from './components';
+import { CardList, ErrorButton, Message } from './components';
 
 import style from './App.module.css';
-import { IPerson, IResponse } from './utils/types';
+import { IPerson } from './utils/types';
 import { API_URL } from './utils/utils';
 
 type IState = {
   value: string;
   flag: boolean;
   data: IPerson[] | null;
+  loading: boolean;
+  error: boolean;
+};
+
+export const getRequest = async (url: string, signal: AbortSignal) => {
+  const response = await fetch(url, { signal });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error: Status ${response.status}`);
+  }
+
+  return response.json();
 };
 
 export class App extends Component<never, IState> {
@@ -16,10 +28,34 @@ export class App extends Component<never, IState> {
     value: '',
     flag: false,
     data: null,
+    loading: false,
+    error: false,
   };
 
   submitHandler = (e: SyntheticEvent) => {
     e.preventDefault();
+    this.fetchFilms(this.state.value);
+  };
+
+  fetchFilms = async (value?: string) => {
+    const searchValue = value?.trim();
+
+    const url = searchValue
+      ? `${API_URL}/people?search=${searchValue}`
+      : `${API_URL}/people`;
+
+    this.setState({ error: false });
+
+    try {
+      this.setState({ error: false, loading: true });
+      const controller = new AbortController();
+      const data = await getRequest(url, controller.signal);
+      this.setState({ data: data?.results?.length ? data.results : null });
+    } catch (error) {
+      this.setState({ error: true, data: null });
+    } finally {
+      this.setState({ loading: false });
+    }
   };
 
   componentDidMount(): void {
@@ -28,57 +64,31 @@ export class App extends Component<never, IState> {
       this.setState({ value: search });
     }
 
-    const fetchFilms = async () => {
-      const res = await fetch(`${API_URL}/people`);
-      const data: IResponse = await res.json();
-      this.setState({ data: data?.results });
-    };
-
-    fetchFilms();
+    this.fetchFilms();
   }
 
-  componentDidUpdate(
-    prevProps: Readonly<object>,
-    prevState: Readonly<{ value: string }>,
-    snapshot?: unknown,
-  ): void {
-    console.log('prevProps', prevProps);
-    console.log('prevState', prevState);
-    console.log('snapshot', snapshot);
-
+  componentDidUpdate(): void {
     if (this.state.flag) {
       throw new Error('Something went wrong!');
     }
   }
 
-  // componentWillUpdate(
-  //   nextProps: Readonly<{}>,
-  //   nextState: Readonly<{ value: string }>,
-  //   nextContext: any,
-  // ): void {
-  //   console.log('first', nextProps);
-  //   console.log('nextState', nextState);
-  //   console.log('nextContext', nextContext);
-  //   localStorage.setItem('search', nextState.value);
-  // }
-
-  getSnapshotBeforeUpdate(
-    prevProps: Readonly<object>,
-    prevState: Readonly<object>,
-  ) {
-    console.log('prevProps', prevProps);
-    console.log('prevState', prevState);
-    return prevState;
-  }
-
   throwErrorHandler = () => {
     this.setState({ flag: true });
-    console.log('first');
+  };
+
+  onChange = (e: SyntheticEvent) => {
+    const target = e.target as HTMLInputElement;
+
+    this.setState({
+      value: target.value,
+    });
+    localStorage.setItem('search', target.value);
   };
 
   render() {
-    if (this.state.data === null) return <div>loading</div>;
-    const data = this.state.data;
+    const { onChange, throwErrorHandler, submitHandler } = this;
+    const { value, error, loading, data: persons } = this.state;
 
     return (
       <div className={style.wrapper}>
@@ -87,29 +97,24 @@ export class App extends Component<never, IState> {
             <ErrorButton
               type="button"
               title="THOW ERROR"
-              onClick={this.throwErrorHandler}
+              onClick={throwErrorHandler}
             />
           </div>
 
-          <form onSubmit={(e) => this.submitHandler(e)}>
-            <label htmlFor="" className="label">
-              <input
-                type="search"
-                value={this.state.value}
-                onChange={(e) =>
-                  this.setState({
-                    value: e.target.value,
-                  })
-                }
-              ></input>
+          <form onSubmit={submitHandler}>
+            <label className="label">
+              <input value={value} onChange={onChange}></input>
               <button type="submit">search</button>
             </label>
           </form>
         </div>
         <div className={style.bottom_section}>
-          {data.map((person) => (
-            <Card name={person.name} description={'person'} />
-          ))}
+          {error && <Message message="error" />}
+          {loading && <Message message="loading" />}
+          {!loading && !error && persons?.length && (
+            <CardList persons={persons} />
+          )}
+          {!loading && !persons?.length && <Message message="not found" />}
         </div>
       </div>
     );
