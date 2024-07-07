@@ -7,14 +7,26 @@ export class Card extends Component<{ person: IPerson }, never> {
     const person = this.props.person;
     return (
       <div className={style.card}>
-        <h4>{person.name}</h4>
-        <div>
-          <div>dob: {person.birth_year}</div>
-          <div>gender: {person.gender}</div>
-          <div>height: {person.height}</div>
-          <div>skin color: {person.skin_color}</div>
-          <div>eye color: {person.eye_color}</div>
-          <div>hair color: {person.hair_color}</div>
+        <h4 className={style.title}>{person.name}</h4>
+        <div className={style.description}>
+          <div className={style.item}>
+            <span>dob:</span> {person.birth_year}
+          </div>
+          <div className={style.item}>
+            <span>gender:</span> {person.gender}
+          </div>
+          <div className={style.item}>
+            <span>height:</span> {person.height}
+          </div>
+          <div className={style.item}>
+            <span>skin color:</span> {person.skin_color}
+          </div>
+          <div className={style.item}>
+            <span>eye color:</span> {person.eye_color}
+          </div>
+          <div className={style.item}>
+            <span>hair color:</span> {person.hair_color}
+          </div>
         </div>
       </div>
     );

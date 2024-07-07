@@ -1,14 +1,10 @@
-import { Component } from 'react';
+import { Component, ReactNode } from 'react';
 import style from './Message.module.css';
 
-export class Message extends Component<{ message: string }, never> {
+export class Message extends Component<{ children: ReactNode }, never> {
   render() {
-    const message = this.props.message;
+    const children = this.props.children;
 
-    return (
-      <div className={style.wrapper}>
-        <h3>{message}</h3>
-      </div>
-    );
+    return <div className={style.wrapper}>{children}</div>;
   }
 }

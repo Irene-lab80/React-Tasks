@@ -1,9 +1,9 @@
 import { Component, SyntheticEvent } from 'react';
-import { CardList, ErrorButton, Message } from './components';
+import { CardList, ErrorButton, Loader, Message, Search } from './components';
 
 import style from './App.module.css';
 import { IPerson } from './utils/types';
-import { API_URL } from './utils/utils';
+import { API_URL, getRequest } from './utils/utils';
 
 type IState = {
   value: string;
@@ -11,16 +11,6 @@ type IState = {
   data: IPerson[] | null;
   loading: boolean;
   error: boolean;
-};
-
-const getRequest = async (url: string, signal: AbortSignal) => {
-  const response = await fetch(url, { signal });
-
-  if (!response.ok) {
-    throw new Error(`HTTP error: Status ${response.status}`);
-  }
-
-  return response.json();
 };
 
 class App extends Component {
@@ -58,6 +48,19 @@ class App extends Component {
     }
   };
 
+  throwErrorHandler = () => {
+    this.setState({ flag: true });
+  };
+
+  onChange = (e: SyntheticEvent) => {
+    const target = e.target as HTMLInputElement;
+
+    this.setState({
+      value: target.value,
+    });
+    localStorage.setItem('search', target.value);
+  };
+
   componentDidMount(): void {
     const search = localStorage.getItem('search');
     if (search) {
@@ -72,19 +75,6 @@ class App extends Component {
       throw new Error('Something went wrong!');
     }
   }
-
-  throwErrorHandler = () => {
-    this.setState({ flag: true });
-  };
-
-  onChange = (e: SyntheticEvent) => {
-    const target = e.target as HTMLInputElement;
-
-    this.setState({
-      value: target.value,
-    });
-    localStorage.setItem('search', target.value);
-  };
 
   render() {
     const { onChange, throwErrorHandler, submitHandler } = this;
@@ -102,19 +92,20 @@ class App extends Component {
           </div>
 
           <form onSubmit={submitHandler}>
-            <label className="label">
-              <input value={value} onChange={onChange}></input>
-              <button type="submit">search</button>
-            </label>
+            <Search onChange={onChange} value={value} />
           </form>
         </div>
         <div className={style.bottom_section}>
-          {error && <Message message="error" />}
-          {loading && <Message message="loading" />}
+          {error && <Message>Error</Message>}
+          {loading && (
+            <Message>
+              <Loader />
+            </Message>
+          )}
           {!loading && !error && persons?.length && (
             <CardList persons={persons} />
           )}
-          {!loading && !persons?.length && <Message message="not found" />}
+          {!loading && !persons?.length && <Message>Not Found</Message>}
         </div>
       </div>
     );

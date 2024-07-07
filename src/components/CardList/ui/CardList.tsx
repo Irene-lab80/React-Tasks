@@ -8,7 +8,7 @@ export class CardList extends Component<{ persons: IPerson[] }, never> {
     return (
       <div className={style.list}>
         {this.props.persons.map((person) => (
-          <Card person={person}></Card>
+          <Card key={person.url} person={person}></Card>
         ))}
       </div>
     );
