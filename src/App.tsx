@@ -24,6 +24,7 @@ class App extends Component {
 
   submitHandler = (e: SyntheticEvent) => {
     e.preventDefault();
+    localStorage.setItem('search', this.state.value);
     this.fetchFilms(this.state.value);
   };
 
@@ -58,16 +59,16 @@ class App extends Component {
     this.setState({
       value: target.value,
     });
-    localStorage.setItem('search', target.value);
   };
 
   componentDidMount(): void {
     const search = localStorage.getItem('search');
     if (search) {
       this.setState({ value: search });
+      this.fetchFilms(search);
+    } else {
+      this.fetchFilms();
     }
-
-    this.fetchFilms();
   }
 
   componentDidUpdate(): void {
