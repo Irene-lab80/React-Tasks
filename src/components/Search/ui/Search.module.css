@@ -1,0 +1,23 @@
+.label {
+  display: flex;
+}
+
+.input {
+  padding: 10px 5px;
+  border-radius: 7px 0 0 7px;
+  border: none;
+  border: 1px solid transparent;
+  background: rgb(228, 224, 224);
+}
+
+.input:focus {
+  outline: none;
+  background: white;
+}
+
+.button {
+  background: transparent;
+  color: rgb(226, 220, 212);
+  padding: 5px 20px;
+  cursor: pointer;
+}
