@@ -1,4 +1,4 @@
-import { Component, SyntheticEvent } from 'react';
+import { SyntheticEvent, useEffect, useState } from 'react';
 import { CardList, ErrorButton, Loader, Message, Search } from './components';
 
 import style from './App.module.css';
@@ -13,103 +13,99 @@ type IState = {
   error: boolean;
 };
 
-class App extends Component {
-  state: IState = {
+const App = () => {
+  const [state, setState] = useState<IState>({
     value: '',
     flag: false,
     data: null,
     loading: false,
     error: false,
-  };
+  });
 
-  submitHandler = (e: SyntheticEvent) => {
+  const submitHandler = (e: SyntheticEvent) => {
     e.preventDefault();
-    localStorage.setItem('search', this.state.value);
-    this.fetchFilms(this.state.value);
+    localStorage.setItem('search', state.value);
+    fetchFilms(state.value);
   };
 
-  fetchFilms = async (value?: string) => {
+  const fetchFilms = async (value?: string) => {
     const searchValue = value?.trim();
 
     const url = searchValue
       ? `${API_URL}/people?search=${searchValue}`
       : `${API_URL}/people`;
 
-    this.setState({ error: false });
+    setState({ ...state, error: false });
 
     try {
-      this.setState({ error: false, loading: true });
+      setState({ ...state, error: false, loading: true });
       const controller = new AbortController();
       const data = await getRequest(url, controller.signal);
-      this.setState({ data: data?.results?.length ? data.results : null });
+      setState({ ...state, data: data?.results?.length ? data.results : null });
     } catch (error) {
-      this.setState({ error: true, data: null });
+      setState({ ...state, error: true, data: null });
     } finally {
-      this.setState({ loading: false });
+      setState({ ...state, loading: false });
     }
   };
 
-  throwErrorHandler = () => {
-    this.setState({ flag: true });
+  const throwErrorHandler = () => {
+    setState({ ...state, flag: true });
   };
 
-  onChange = (e: SyntheticEvent) => {
+  const onChange = (e: SyntheticEvent) => {
     const target = e.target as HTMLInputElement;
 
-    this.setState({
-      value: target.value,
-    });
+    setState({ ...state, value: target.value });
   };
 
-  componentDidMount(): void {
+  useEffect(() => {
     const search = localStorage.getItem('search');
     if (search) {
-      this.setState({ value: search });
-      this.fetchFilms(search);
+      setState({ ...state, value: search });
+      fetchFilms(search);
     } else {
-      this.fetchFilms();
+      fetchFilms();
     }
-  }
+  }, []);
 
-  componentDidUpdate(): void {
-    if (this.state.flag) {
+  useEffect(() => {
+    if (state.flag) {
       throw new Error('Something went wrong!');
     }
-  }
+  }, [state.flag]);
 
-  render() {
-    const { onChange, throwErrorHandler, submitHandler } = this;
-    const { value, error, loading, data: persons } = this.state;
+  const { value, error, loading, data: persons } = state;
 
-    return (
-      <div className={style.wrapper}>
-        <div className={style.top_section}>
-          <div className={style.error_button_wrapper}>
-            <ErrorButton
-              type="button"
-              title="THOW ERROR"
-              onClick={throwErrorHandler}
-            />
-          </div>
-
-          <form onSubmit={submitHandler}>
-            <Search onChange={onChange} value={value} />
-          </form>
+  return (
+    <div className={style.wrapper}>
+      <div className={style.top_section}>
+        <div className={style.error_button_wrapper}>
+          <ErrorButton
+            type="button"
+            title="THOW ERROR"
+            onClick={throwErrorHandler}
+          />
         </div>
-        <div className={style.bottom_section}>
-          {error && <Message>Error</Message>}
-          {loading && (
-            <Message>
-              <Loader />
-            </Message>
-          )}
-          {!loading && !error && persons?.length && (
-            <CardList persons={persons} />
-          )}
-          {!loading && !persons?.length && <Message>Not Found</Message>}
-        </div>
+
+        <form onSubmit={submitHandler}>
+          <Search onChange={onChange} value={value} />
+        </form>
       </div>
-    );
-  }
-}
+      <div className={style.bottom_section}>
+        {error && <Message>Error</Message>}
+        {loading && (
+          <Message>
+            <Loader />
+          </Message>
+        )}
+        {!loading && !error && persons?.length && (
+          <CardList persons={persons} />
+        )}
+        {!loading && !persons?.length && <Message>Not Found</Message>}
+      </div>
+    </div>
+  );
+};
+
 export default App;
