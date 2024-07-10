@@ -5,27 +5,17 @@ import style from './App.module.css';
 import { IPerson } from './utils/types';
 import { API_URL, getRequest } from './utils/utils';
 
-type IState = {
-  value: string;
-  flag: boolean;
-  data: IPerson[] | null;
-  loading: boolean;
-  error: boolean;
-};
-
 const App = () => {
-  const [state, setState] = useState<IState>({
-    value: '',
-    flag: false,
-    data: null,
-    loading: false,
-    error: false,
-  });
+  const [flag, setFlag] = useState(false);
+  const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [value, setValue] = useState('');
+  const [data, setData] = useState<IPerson[] | null>(null);
 
   const submitHandler = (e: SyntheticEvent) => {
     e.preventDefault();
-    localStorage.setItem('search', state.value);
-    fetchFilms(state.value);
+    localStorage.setItem('search', value);
+    fetchFilms(value);
   };
 
   const fetchFilms = async (value?: string) => {
@@ -35,34 +25,35 @@ const App = () => {
       ? `${API_URL}/people?search=${searchValue}`
       : `${API_URL}/people`;
 
-    setState({ ...state, error: false });
+    setError(false);
 
     try {
-      setState({ ...state, error: false, loading: true });
+      setLoading(true);
       const controller = new AbortController();
       const data = await getRequest(url, controller.signal);
-      setState({ ...state, data: data?.results?.length ? data.results : null });
+      setData(data?.results?.length ? data.results : null);
     } catch (error) {
-      setState({ ...state, error: true, data: null });
+      setData(null);
+      setError(true);
     } finally {
-      setState({ ...state, loading: false });
+      setLoading(false);
     }
   };
 
   const throwErrorHandler = () => {
-    setState({ ...state, flag: true });
+    setFlag(true);
   };
 
   const onChange = (e: SyntheticEvent) => {
     const target = e.target as HTMLInputElement;
 
-    setState({ ...state, value: target.value });
+    setValue(target.value);
   };
 
   useEffect(() => {
     const search = localStorage.getItem('search');
     if (search) {
-      setState({ ...state, value: search });
+      setValue(search);
       fetchFilms(search);
     } else {
       fetchFilms();
@@ -70,12 +61,10 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    if (state.flag) {
+    if (flag) {
       throw new Error('Something went wrong!');
     }
-  }, [state.flag]);
-
-  const { value, error, loading, data: persons } = state;
+  }, [flag]);
 
   return (
     <div className={style.wrapper}>
@@ -99,10 +88,8 @@ const App = () => {
             <Loader />
           </Message>
         )}
-        {!loading && !error && persons?.length && (
-          <CardList persons={persons} />
-        )}
-        {!loading && !persons?.length && <Message>Not Found</Message>}
+        {!loading && !error && data?.length && <CardList persons={data} />}
+        {!loading && !data?.length && <Message>Not Found</Message>}
       </div>
     </div>
   );
