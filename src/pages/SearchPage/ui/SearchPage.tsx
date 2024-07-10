@@ -1,11 +1,18 @@
 import { SyntheticEvent, useEffect, useState } from 'react';
-import { CardList, ErrorButton, Loader, Message, Search } from './components';
 
-import style from './App.module.css';
-import { IPerson } from './utils/types';
-import { API_URL, getRequest } from './utils/utils';
+import { API_URL, getRequest } from '../../../utils/utils';
+import {
+  CardList,
+  ErrorButton,
+  Loader,
+  Message,
+  Search,
+} from '../../../components';
+import { IPerson } from '../../../utils/types';
 
-const App = () => {
+import style from './SearchPage.module.css';
+
+export const SearchPage = () => {
   const [flag, setFlag] = useState(false);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -94,5 +101,3 @@ const App = () => {
     </div>
   );
 };
-
-export default App;

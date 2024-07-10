@@ -1,17 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App.tsx';
-import './index.css';
 import { ErrorBoundary } from './components';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { ErrorPage, SearchPage } from './pages/index.ts';
+
+import './index.css';
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <App />,
+    element: <SearchPage />,
+    errorElement: <ErrorPage />,
   },
   {
-    path: '/person',
+    path: '/person/:contactId',
     element: <div>person</div>,
   },
 ]);
