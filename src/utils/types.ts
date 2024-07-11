@@ -13,19 +13,13 @@ export interface IPerson {
   skin_color: string;
   eye_color: string;
   birth_year: string;
-  gender: IGender;
+  gender: string;
   homeworld: string;
   films: string[];
   species: string[];
   vehicles: string[];
   starships: string[];
-  created: Date;
-  edited: Date;
+  created: string;
+  edited: string;
   url: string;
-}
-
-export enum IGender {
-  Female = 'female',
-  Male = 'male',
-  NA = 'n/a',
 }
