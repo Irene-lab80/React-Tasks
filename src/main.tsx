@@ -11,7 +11,15 @@ const router = createBrowserRouter([
     path: '/',
     element: <SearchPage />,
     errorElement: <ErrorPage />,
+    children: [
+      {
+        path: '/:page',
+        element: <SearchPage />,
+        errorElement: <ErrorPage />,
+      },
+    ],
   },
+
   {
     path: '/person/:contactId',
     element: <div>person</div>,

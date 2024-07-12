@@ -6,3 +6,4 @@ export { Card } from './Card';
 export { CardList } from './CardList';
 export { Message } from './Message';
 export { Loader } from './Loader';
+export { Pagination } from './Pagination';

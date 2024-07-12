@@ -1,4 +1,4 @@
-import { SyntheticEvent, useEffect, useState } from 'react';
+import React, { SyntheticEvent, useEffect, useState } from 'react';
 
 import { API_URL, getRequest } from '../../../utils/utils';
 import {
@@ -6,18 +6,27 @@ import {
   ErrorButton,
   Loader,
   Message,
+  Pagination,
   Search,
 } from '../../../components';
 import { IPerson } from '../../../utils/types';
 
 import style from './SearchPage.module.css';
+import { useParams } from 'react-router-dom';
 
 export const SearchPage = () => {
+  const params = useParams();
   const [flag, setFlag] = useState(false);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [value, setValue] = useState('');
   const [data, setData] = useState<IPerson[] | null>(null);
+  const [totalCount, setTotalCount] = useState(null);
+
+  const [currentPage, setCurrentPage] = useState(
+    params.page ? +params?.page : 1,
+  );
+  const [totalPageCount, setTotalPageCount] = useState<number | null>(null);
 
   const submitHandler = (e: SyntheticEvent) => {
     e.preventDefault();
@@ -30,7 +39,7 @@ export const SearchPage = () => {
 
     const url = searchValue
       ? `${API_URL}/people?search=${searchValue}`
-      : `${API_URL}/people`;
+      : `${API_URL}/people/?page=${currentPage}`;
 
     setError(false);
 
@@ -39,6 +48,9 @@ export const SearchPage = () => {
       const controller = new AbortController();
       const data = await getRequest(url, controller.signal);
       setData(data?.results?.length ? data.results : null);
+      setTotalCount(data.count);
+      const totalPageCount = Math.ceil(data.count / 10);
+      setTotalPageCount(totalPageCount);
     } catch (error) {
       setData(null);
       setError(true);
@@ -65,13 +77,17 @@ export const SearchPage = () => {
     } else {
       fetchFilms();
     }
-  }, []);
+  }, [currentPage]);
 
   useEffect(() => {
     if (flag) {
       throw new Error('Something went wrong!');
     }
   }, [flag]);
+
+  useEffect(() => {
+    setCurrentPage(params.page ? +params?.page : 1);
+  }, [params.page]);
 
   return (
     <div className={style.wrapper}>
@@ -98,6 +114,11 @@ export const SearchPage = () => {
         {!loading && !error && data?.length && <CardList persons={data} />}
         {!loading && !data?.length && <Message>Not Found</Message>}
       </div>
+      <Pagination
+        currentPage={currentPage}
+        totalCount={totalCount}
+        totalPageCount={totalPageCount}
+      />
     </div>
   );
 };
