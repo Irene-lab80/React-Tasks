@@ -12,6 +12,16 @@ export const Pagination = ({
 }): JSX.Element => {
   const navigate = useNavigate();
 
+  const handleNextPage = () => {
+    if (!totalPageCount || currentPage > totalPageCount) return;
+    navigate(`/${currentPage + 1}`);
+  };
+
+  const handlePrevPage = () => {
+    if (!totalPageCount || currentPage < 1) return;
+    navigate(`/${currentPage - 1}`);
+  };
+
   return (
     <div>
       {totalPageCount && (
@@ -20,11 +30,7 @@ export const Pagination = ({
             disabled={currentPage === 1}
             className={style.button}
             type="button"
-            onClick={() => {
-              if (currentPage > 1) {
-                navigate(`/${currentPage - 1}`);
-              } else return;
-            }}
+            onClick={handlePrevPage}
           >
             prev
           </button>
@@ -33,11 +39,7 @@ export const Pagination = ({
             disabled={currentPage === totalPageCount}
             className={style.button}
             type="button"
-            onClick={() => {
-              if (currentPage < totalPageCount) {
-                navigate(`/${currentPage + 1}`);
-              } else return;
-            }}
+            onClick={handleNextPage}
           >
             next
           </button>

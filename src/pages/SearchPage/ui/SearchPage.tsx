@@ -1,18 +1,20 @@
-import React, { SyntheticEvent, useEffect, useState } from 'react';
+import { SyntheticEvent, useContext, useEffect, useState } from 'react';
 
 import { API_URL, getRequest } from '../../../utils/utils';
 import {
   CardList,
   ErrorButton,
-  Loader,
+  LoaderNew,
   Message,
   Pagination,
   Search,
 } from '../../../components';
 import { IPerson } from '../../../utils/types';
 
-import style from './SearchPage.module.css';
 import { useParams } from 'react-router-dom';
+
+import style from './SearchPage.module.css';
+import { MenuContext } from '../../../provider';
 
 export const SearchPage = () => {
   const params = useParams();
@@ -26,6 +28,7 @@ export const SearchPage = () => {
   const [currentPage, setCurrentPage] = useState(
     params.page ? +params?.page : 1,
   );
+
   const [totalPageCount, setTotalPageCount] = useState<number | null>(null);
 
   const submitHandler = (e: SyntheticEvent) => {
@@ -38,7 +41,7 @@ export const SearchPage = () => {
     const searchValue = value?.trim();
 
     const url = searchValue
-      ? `${API_URL}/people?search=${searchValue}`
+      ? `${API_URL}/people?search=${searchValue}&page=${currentPage}`
       : `${API_URL}/people/?page=${currentPage}`;
 
     setError(false);
@@ -89,13 +92,27 @@ export const SearchPage = () => {
     setCurrentPage(params.page ? +params?.page : 1);
   }, [params.page]);
 
+  const {
+    isHidden,
+    setIsHidden,
+    setData: setDataContext,
+  } = useContext(MenuContext);
+
+  const handleClickCard = (url: string) => {
+    console.log('url', url);
+    setIsHidden(false);
+    setDataContext(url);
+    console.log('first');
+    console.log('isHidden', isHidden);
+  };
+
   return (
     <div className={style.wrapper}>
       <div className={style.top_section}>
         <div className={style.error_button_wrapper}>
           <ErrorButton
             type="button"
-            title="THOW ERROR"
+            title="THROW ERROR"
             onClick={throwErrorHandler}
           />
         </div>
@@ -106,12 +123,10 @@ export const SearchPage = () => {
       </div>
       <div className={style.bottom_section}>
         {error && <Message>Error</Message>}
-        {loading && (
-          <Message>
-            <Loader />
-          </Message>
+        {loading && <LoaderNew />}
+        {!loading && !error && data?.length && (
+          <CardList onClick={handleClickCard} persons={data} />
         )}
-        {!loading && !error && data?.length && <CardList persons={data} />}
         {!loading && !data?.length && <Message>Not Found</Message>}
       </div>
       <Pagination
