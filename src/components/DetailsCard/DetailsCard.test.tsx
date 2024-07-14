@@ -10,7 +10,8 @@ describe('Card', () => {
     const cards = screen.queryAllByTestId('card');
 
     await user.click(cards[0]);
-    waitFor(() => expect(screen.getByText('loader')).toBeInTheDocument());
+    const loader = await screen.findByTestId('loader');
+    expect(loader).toBeInTheDocument();
   });
 
   test('Make sure the detailed card component correctly displays the detailed card data', async () => {

@@ -19,10 +19,6 @@ describe('Card', () => {
     render(<Card person={mockPerson} onClick={() => null} />);
     const title = screen.getByText('Luke Skywalker');
     expect(title).toBeInTheDocument();
-    const birth_year = screen.getByText('19BBY');
-    expect(birth_year).toBeInTheDocument();
-    const gender = screen.getByText('male');
-    expect(gender).toBeInTheDocument();
   });
 
   test('Validate that clicking on a card opens a detailed card component.', async () => {

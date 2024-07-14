@@ -50,20 +50,24 @@ export const DetailsCard = () => {
 
   useEffect(() => {
     const handleClick = (event: MouseEvent | TouchEvent | FocusEvent) => {
-      const target = event.target as Node;
-
+      const target = event.target as HTMLElement;
+      console.log('event.currentTarget', event.currentTarget);
       console.log('target', target);
       if (!target || !target.isConnected) {
         return;
       }
 
       const isOutside =
-        ref.current && !(ref.current as HTMLElement)?.contains(target);
+        ref.current &&
+        !(ref.current as HTMLElement)?.contains(target) &&
+        !target.getAttribute('data-testid');
 
       console.log('isOutside', isOutside);
       console.log('ref.current', ref.current);
+      console.log('target', target);
 
-      if (isOutside) {
+      if (isOutside && id) {
+        navigate(pathname);
         // setIsHidden(true);
       }
     };
@@ -96,11 +100,34 @@ export const DetailsCard = () => {
           x
         </button>
 
-        <div className={style.details}>
-          <div>id : {`${id}`}</div>
-          <div>name: {data?.name}</div>
-          <div>birth year: {data?.birth_year}</div>
-        </div>
+        {!loading && (
+          <div className={style.description}>
+            <div className={style.item}>
+              <span>id:</span> {id}
+            </div>
+            <div className={style.item}>
+              <span>name:</span> {data?.name}
+            </div>
+            <div className={style.item}>
+              <span>dob:</span> {data?.birth_year}
+            </div>
+            <div className={style.item}>
+              <span>gender:</span> {data?.gender}
+            </div>
+            <div className={style.item}>
+              <span>height:</span> {data?.height}
+            </div>
+            <div className={style.item}>
+              <span>skin color:</span> {data?.skin_color}
+            </div>
+            <div className={style.item}>
+              <span>eye color:</span> {data?.eye_color}
+            </div>
+            <div className={style.item}>
+              <span>hair color:</span> {data?.hair_color}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

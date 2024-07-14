@@ -1,5 +1,6 @@
 import { SyntheticEvent, useEffect, useState } from 'react';
-
+import { useParams, useSearchParams } from 'react-router-dom';
+import { useLocalStorage } from '../../../hooks/useLocalStorage';
 import { API_URL, getRequest } from '../../../utils/utils';
 import {
   CardList,
@@ -11,10 +12,7 @@ import {
 } from '../../../components';
 import { IPerson } from '../../../utils/types';
 
-import { useParams, useSearchParams } from 'react-router-dom';
-
 import style from './SearchPage.module.css';
-import { useLocalStorage } from '../../../hooks/useLocalStorage';
 
 export const SearchPage = () => {
   const params = useParams();
@@ -39,11 +37,10 @@ export const SearchPage = () => {
   const submitHandler = (e: SyntheticEvent) => {
     e.preventDefault();
     setCurrentPage(1);
-    // localStorage.setItem('search', value);
     setStoredSearchQuery(value);
     fetchFilms(value);
   };
-  console.log('storedSearchQuery', storedSearchQuery);
+
   const fetchFilms = async (value?: string) => {
     const searchValue = value?.trim();
 
@@ -85,7 +82,6 @@ export const SearchPage = () => {
   };
 
   useEffect(() => {
-    // const search = localStorage.getItem('search');
     if (storedSearchQuery) {
       setValue(storedSearchQuery);
       fetchFilms(storedSearchQuery);
