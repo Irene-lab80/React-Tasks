@@ -9,7 +9,7 @@ export const Card = ({
   onClick: () => void;
 }) => {
   return (
-    <div className={style.card} onClick={onClick}>
+    <div className={style.card} onClick={onClick} data-testid="card">
       <h4 className={style.title}>{person.name}</h4>
       <div className={style.description}>
         <div className={style.item}>

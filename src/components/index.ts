@@ -6,5 +6,5 @@ export { Card } from './Card';
 export { CardList } from './CardList';
 export { Message } from './Message';
 export { Pagination } from './Pagination';
-export { MainLayout } from './MainLayout';
+export { DetailsCard } from './DetailsCard';
 export { LoaderNew } from './LoaderNew';

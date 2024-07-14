@@ -1,4 +1,4 @@
-import { SyntheticEvent, useContext, useEffect, useState } from 'react';
+import { SyntheticEvent, useEffect, useState } from 'react';
 
 import { API_URL, getRequest } from '../../../utils/utils';
 import {
@@ -11,19 +11,24 @@ import {
 } from '../../../components';
 import { IPerson } from '../../../utils/types';
 
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 
 import style from './SearchPage.module.css';
-import { MenuContext } from '../../../provider';
+import { useLocalStorage } from '../../../hooks/useLocalStorage';
 
 export const SearchPage = () => {
   const params = useParams();
+  const [, setSearchParams] = useSearchParams();
   const [flag, setFlag] = useState(false);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [value, setValue] = useState('');
   const [data, setData] = useState<IPerson[] | null>(null);
   const [totalCount, setTotalCount] = useState(null);
+  const [storedSearchQuery, setStoredSearchQuery] = useLocalStorage(
+    'search',
+    '',
+  );
 
   const [currentPage, setCurrentPage] = useState(
     params.page ? +params?.page : 1,
@@ -33,10 +38,12 @@ export const SearchPage = () => {
 
   const submitHandler = (e: SyntheticEvent) => {
     e.preventDefault();
-    localStorage.setItem('search', value);
+    setCurrentPage(1);
+    // localStorage.setItem('search', value);
+    setStoredSearchQuery(value);
     fetchFilms(value);
   };
-
+  console.log('storedSearchQuery', storedSearchQuery);
   const fetchFilms = async (value?: string) => {
     const searchValue = value?.trim();
 
@@ -48,8 +55,7 @@ export const SearchPage = () => {
 
     try {
       setLoading(true);
-      const controller = new AbortController();
-      const data = await getRequest(url, controller.signal);
+      const data = await getRequest(url);
       setData(data?.results?.length ? data.results : null);
       setTotalCount(data.count);
       const totalPageCount = Math.ceil(data.count / 10);
@@ -72,11 +78,17 @@ export const SearchPage = () => {
     setValue(target.value);
   };
 
+  const handleClickCard = (url: string) => {
+    const id = url.split('/').reverse()[1];
+
+    setSearchParams({ details: id });
+  };
+
   useEffect(() => {
-    const search = localStorage.getItem('search');
-    if (search) {
-      setValue(search);
-      fetchFilms(search);
+    // const search = localStorage.getItem('search');
+    if (storedSearchQuery) {
+      setValue(storedSearchQuery);
+      fetchFilms(storedSearchQuery);
     } else {
       fetchFilms();
     }
@@ -91,20 +103,6 @@ export const SearchPage = () => {
   useEffect(() => {
     setCurrentPage(params.page ? +params?.page : 1);
   }, [params.page]);
-
-  const {
-    isHidden,
-    setIsHidden,
-    setData: setDataContext,
-  } = useContext(MenuContext);
-
-  const handleClickCard = (url: string) => {
-    console.log('url', url);
-    setIsHidden(false);
-    setDataContext(url);
-    console.log('first');
-    console.log('isHidden', isHidden);
-  };
 
   return (
     <div className={style.wrapper}>

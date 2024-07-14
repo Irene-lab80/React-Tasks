@@ -31,6 +31,7 @@ export const Pagination = ({
             className={style.button}
             type="button"
             onClick={handlePrevPage}
+            data-testid="prev"
           >
             prev
           </button>
@@ -40,6 +41,7 @@ export const Pagination = ({
             className={style.button}
             type="button"
             onClick={handleNextPage}
+            data-testid="next"
           >
             next
           </button>
