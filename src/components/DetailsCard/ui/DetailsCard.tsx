@@ -68,7 +68,6 @@ export const DetailsCard = () => {
 
       if (isOutside && id) {
         navigate(pathname);
-        // setIsHidden(true);
       }
     };
 
