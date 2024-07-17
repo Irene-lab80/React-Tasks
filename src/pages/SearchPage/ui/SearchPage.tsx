@@ -1,7 +1,6 @@
 import { SyntheticEvent, useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { useLocalStorage } from '../../../hooks/useLocalStorage';
-import { API_URL, getRequest } from '../../../utils/utils';
 import {
   CardList,
   ErrorButton,
@@ -10,19 +9,19 @@ import {
   Pagination,
   Search,
 } from '../../../components';
-import { IPerson } from '../../../utils/types';
 
 import style from './SearchPage.module.css';
+import {
+  useGetPeopleQuery,
+  useLazyGetPeopleQuery,
+} from '../../../redux/mainApi';
 
 export const SearchPage = () => {
   const params = useParams();
   const [, setSearchParams] = useSearchParams();
   const [flag, setFlag] = useState(false);
-  const [error, setError] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [value, setValue] = useState('');
-  const [data, setData] = useState<IPerson[] | null>(null);
-  const [totalCount, setTotalCount] = useState(null);
+  const [totalCount, setTotalCount] = useState<number | null>(null);
   const [storedSearchQuery, setStoredSearchQuery] = useLocalStorage(
     'search',
     '',
@@ -34,35 +33,20 @@ export const SearchPage = () => {
 
   const [totalPageCount, setTotalPageCount] = useState<number | null>(null);
 
+  const {
+    data: people,
+    isLoading,
+    isFetching,
+    isError,
+  } = useGetPeopleQuery({ page: currentPage, search: storedSearchQuery });
+
+  const [getPeople] = useLazyGetPeopleQuery();
+
   const submitHandler = (e: SyntheticEvent) => {
     e.preventDefault();
     setCurrentPage(1);
     setStoredSearchQuery(value);
-    fetchFilms(value);
-  };
-
-  const fetchFilms = async (value?: string) => {
-    const searchValue = value?.trim();
-
-    const url = searchValue
-      ? `${API_URL}/people?search=${searchValue}&page=${currentPage}`
-      : `${API_URL}/people/?page=${currentPage}`;
-
-    setError(false);
-
-    try {
-      setLoading(true);
-      const data = await getRequest(url);
-      setData(data?.results?.length ? data.results : null);
-      setTotalCount(data.count);
-      const totalPageCount = Math.ceil(data.count / 10);
-      setTotalPageCount(totalPageCount);
-    } catch (error) {
-      setData(null);
-      setError(true);
-    } finally {
-      setLoading(false);
-    }
+    getPeople({ page: currentPage, search: value });
   };
 
   const throwErrorHandler = () => {
@@ -71,24 +55,19 @@ export const SearchPage = () => {
 
   const onChange = (e: SyntheticEvent) => {
     const target = e.target as HTMLInputElement;
-
     setValue(target.value);
   };
 
   const handleClickCard = (url: string) => {
     const id = url.split('/').reverse()[1];
-
     setSearchParams({ details: id });
   };
 
   useEffect(() => {
     if (storedSearchQuery) {
       setValue(storedSearchQuery);
-      fetchFilms(storedSearchQuery);
-    } else {
-      fetchFilms();
     }
-  }, [currentPage]);
+  }, [currentPage, storedSearchQuery]);
 
   useEffect(() => {
     if (flag) {
@@ -99,6 +78,13 @@ export const SearchPage = () => {
   useEffect(() => {
     setCurrentPage(params.page ? +params?.page : 1);
   }, [params.page]);
+
+  useEffect(() => {
+    if (people?.count) {
+      setTotalCount(people?.count);
+      setTotalPageCount(Math.floor(people?.count / 10));
+    }
+  }, [people]);
 
   return (
     <div className={style.wrapper}>
@@ -116,12 +102,12 @@ export const SearchPage = () => {
         </form>
       </div>
       <div className={style.bottom_section}>
-        {error && <Message>Error</Message>}
-        {loading && <LoaderNew />}
-        {!loading && !error && data?.length && (
-          <CardList onClick={handleClickCard} persons={data} />
+        {isError && <Message>Error</Message>}
+        {(isLoading || isFetching) && <LoaderNew />}
+        {!isLoading && !isError && people?.results?.length && (
+          <CardList onClick={handleClickCard} persons={people?.results} />
         )}
-        {!loading && !data?.length && <Message>Not Found</Message>}
+        {!isLoading && !people?.results?.length && <Message>Not Found</Message>}
       </div>
       <Pagination
         currentPage={currentPage}

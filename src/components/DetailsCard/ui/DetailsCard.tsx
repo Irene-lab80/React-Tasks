@@ -5,48 +5,21 @@ import {
   useSearchParams,
 } from 'react-router-dom';
 
-import { useEffect, useRef, useState } from 'react';
-
-import { API_URL, getRequest } from '../../../utils/utils';
+import { useEffect, useRef } from 'react';
 
 import style from './DetailsCard.module.css';
-import { IPerson } from '../../../utils/types';
 import { LoaderNew } from '../../LoaderNew';
+import { useGetPersonQuery } from '../../../redux/mainApi';
+import { skipToken } from '@reduxjs/toolkit/query';
 
 export const DetailsCard = () => {
-  const [, setError] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [data, setData] = useState<IPerson | null>(null);
-
   const [searchParams] = useSearchParams();
   const id = searchParams.get('details');
   const ref = useRef(null);
   const navigate = useNavigate();
   const pathname = useLocation().pathname;
 
-  const fetchFilms = async () => {
-    const url = `${API_URL}/people/${id}`;
-
-    setError(false);
-
-    try {
-      setLoading(true);
-      const data = await getRequest(url);
-      console.log('data', data);
-      setData(data);
-    } catch (error) {
-      setData(null);
-      setError(true);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (id) {
-      fetchFilms();
-    }
-  }, [id]);
+  const { data: person, isLoading } = useGetPersonQuery(id ? +id : skipToken);
 
   useEffect(() => {
     const handleClick = (event: MouseEvent | TouchEvent | FocusEvent) => {
@@ -61,10 +34,6 @@ export const DetailsCard = () => {
         ref.current &&
         !(ref.current as HTMLElement)?.contains(target) &&
         !target.getAttribute('data-testid');
-
-      console.log('isOutside', isOutside);
-      console.log('ref.current', ref.current);
-      console.log('target', target);
 
       if (isOutside && id) {
         navigate(pathname);
@@ -86,7 +55,7 @@ export const DetailsCard = () => {
         ref={ref}
         className={id ? style.info : style.infoHidden}
       >
-        {loading && <LoaderNew />}
+        {isLoading && <LoaderNew />}
         <button
           className={style.closeButton}
           type="button"
@@ -99,31 +68,31 @@ export const DetailsCard = () => {
           x
         </button>
 
-        {!loading && (
+        {!isLoading && (
           <div className={style.description}>
             <div className={style.item}>
               <span>id:</span> {id}
             </div>
             <div className={style.item}>
-              <span>name:</span> {data?.name}
+              <span>name:</span> {person?.name}
             </div>
             <div className={style.item}>
-              <span>dob:</span> {data?.birth_year}
+              <span>dob:</span> {person?.birth_year}
             </div>
             <div className={style.item}>
-              <span>gender:</span> {data?.gender}
+              <span>gender:</span> {person?.gender}
             </div>
             <div className={style.item}>
-              <span>height:</span> {data?.height}
+              <span>height:</span> {person?.height}
             </div>
             <div className={style.item}>
-              <span>skin color:</span> {data?.skin_color}
+              <span>skin color:</span> {person?.skin_color}
             </div>
             <div className={style.item}>
-              <span>eye color:</span> {data?.eye_color}
+              <span>eye color:</span> {person?.eye_color}
             </div>
             <div className={style.item}>
-              <span>hair color:</span> {data?.hair_color}
+              <span>hair color:</span> {person?.hair_color}
             </div>
           </div>
         )}
