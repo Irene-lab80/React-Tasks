@@ -1,0 +1,21 @@
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px;
+  margin: auto;
+
+  .button {
+    background: transparent;
+    color: white;
+    border: 1px solid white;
+    padding: 5px 10px;
+  }
+
+  .button:disabled {
+    color: grey;
+    border: 1px solid grey;
+
+  }
+}
