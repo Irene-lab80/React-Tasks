@@ -2,6 +2,8 @@
   display: flex;
   height: 100%;
   flex: 1;
+  background: var(--color-backgroud);
+  color: var(--color-text);
 }
 
 .info {
@@ -9,8 +11,9 @@
   transition: 0.3;
   padding: 20px;
   background: #bda933;
-  color: black;
+  color: var(--color-text);
   min-height: 100vh;
+  z-index: 10;
 }
 
 .infoHidden {
@@ -27,7 +30,7 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  color: white;
+  color: var(--color-text);
 }
 
 .description {
@@ -41,4 +44,10 @@
 .item {
   display: flex;
   justify-content: space-between;
+}
+
+.themeToggle {
+  position: absolute;
+  right: 10px;
+  top: 10px;
 }

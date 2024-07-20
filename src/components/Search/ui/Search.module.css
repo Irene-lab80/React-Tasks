@@ -17,7 +17,7 @@
 
 .button {
   background: transparent;
-  color: rgb(226, 220, 212);
+  color: var(--color-text);
   padding: 5px 20px;
   cursor: pointer;
 }

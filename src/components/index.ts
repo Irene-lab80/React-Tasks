@@ -8,3 +8,5 @@ export { Message } from './Message';
 export { Pagination } from './Pagination';
 export { DetailsCard } from './DetailsCard';
 export { LoaderNew } from './LoaderNew';
+export { Toggle } from './Toggle';
+export { Checkbox } from './Checkbox';

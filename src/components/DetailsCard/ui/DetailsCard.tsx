@@ -5,14 +5,20 @@ import {
   useSearchParams,
 } from 'react-router-dom';
 
-import { useEffect, useRef } from 'react';
+import { useContext, useRef, useState } from 'react';
 
 import style from './DetailsCard.module.css';
 import { LoaderNew } from '../../LoaderNew';
 import { useGetPersonQuery } from '../../../redux/mainApi';
 import { skipToken } from '@reduxjs/toolkit/query';
+import { Toggle } from '../../Toggle';
+import '../../../index.css';
+import { ThemeContext } from '../../../ThemeProvider';
 
 export const DetailsCard = () => {
+  const [isChecked, setisChecked] = useState(true);
+  const { theme, setTheme } = useContext(ThemeContext);
+
   const [searchParams] = useSearchParams();
   const id = searchParams.get('details');
   const ref = useRef(null);
@@ -21,34 +27,22 @@ export const DetailsCard = () => {
 
   const { data: person, isLoading } = useGetPersonQuery(id ? +id : skipToken);
 
-  useEffect(() => {
-    const handleClick = (event: MouseEvent | TouchEvent | FocusEvent) => {
-      const target = event.target as HTMLElement;
-      console.log('event.currentTarget', event.currentTarget);
-      console.log('target', target);
-      if (!target || !target.isConnected) {
-        return;
-      }
-
-      const isOutside =
-        ref.current &&
-        !(ref.current as HTMLElement)?.contains(target) &&
-        !target.getAttribute('data-testid');
-
-      if (isOutside && id) {
-        navigate(pathname);
-      }
-    };
-
-    document.addEventListener('click', handleClick);
-
-    () => {
-      return document.removeEventListener('click', handleClick);
-    };
-  }, []);
-
   return (
-    <div className={style.outlet}>
+    <div className={style.outlet} data-theme={theme}>
+      <div className={style.themeToggle}>
+        <Toggle
+          handleChange={() => {
+            setisChecked((prev) => !prev);
+
+            if (theme == 'light') {
+              setTheme('dark');
+            } else {
+              setTheme('light');
+            }
+          }}
+          isChecked={isChecked}
+        />
+      </div>
       <Outlet />
       <div
         data-testid="details-card"

@@ -4,13 +4,13 @@
   font-weight: 400;
 
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+
 }
 
 * {
@@ -20,7 +20,19 @@
 html {
   display: flex;
   flex-direction: column;
+
 }
+
+[data-theme="dark"] {
+  --color-backgroud: #242424;
+  --color-text: #fefefe;
+}
+
+[data-theme="light"] {
+  --color-backgroud: #fefefe;
+  --color-text: #242424;
+}
+
 
 body {
   display: flex;
@@ -34,6 +46,7 @@ body {
   flex-direction: column;
   flex: 1;
 }
+
 
 a {
   font-weight: 500;
