@@ -21,7 +21,6 @@ export const CardList = ({
           <Card
             onClick={() => {
               const id = person.url.split('/').reverse()[1];
-
               setSearchParams({ details: id });
             }}
             key={person.url}

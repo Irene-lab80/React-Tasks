@@ -16,7 +16,7 @@ import '../../../index.css';
 import { ThemeContext } from '../../../ThemeProvider';
 
 export const DetailsCard = () => {
-  const [isChecked, setisChecked] = useState(true);
+  const [isChecked, setisChecked] = useState(false);
   const { theme, setTheme } = useContext(ThemeContext);
 
   const [searchParams] = useSearchParams();

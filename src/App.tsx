@@ -1,6 +1,10 @@
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
-import { DetailsCard, Error } from './components';
+import { DetailsCard, Error, ErrorBoundary } from './components';
 import { SearchPage } from './pages';
+import { store } from './redux/store';
+import { Provider } from 'react-redux';
+import ThemeProvider from './ThemeProvider';
+import React from 'react';
 
 const router = createBrowserRouter([
   {
@@ -25,5 +29,15 @@ const router = createBrowserRouter([
 ]);
 
 export const App = () => {
-  return <RouterProvider router={router} />;
+  return (
+    <Provider store={store}>
+      <ErrorBoundary>
+        <React.StrictMode>
+          <ThemeProvider>
+            <RouterProvider router={router} />
+          </ThemeProvider>
+        </React.StrictMode>
+      </ErrorBoundary>
+    </Provider>
+  );
 };

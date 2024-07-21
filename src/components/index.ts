@@ -10,3 +10,4 @@ export { DetailsCard } from './DetailsCard';
 export { LoaderNew } from './LoaderNew';
 export { Toggle } from './Toggle';
 export { Checkbox } from './Checkbox';
+export { Flyout } from './Flyout';

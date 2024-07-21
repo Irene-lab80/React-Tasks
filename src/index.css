@@ -24,12 +24,12 @@ html {
 }
 
 [data-theme="dark"] {
-  --color-backgroud: #242424;
+  --color-background: #242424;
   --color-text: #fefefe;
 }
 
 [data-theme="light"] {
-  --color-backgroud: #fefefe;
+  --color-background: #fefefe;
   --color-text: #242424;
 }
 

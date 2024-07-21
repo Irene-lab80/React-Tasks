@@ -1,8 +1,10 @@
+import { SyntheticEvent } from 'react';
+
 interface IProps {
-  handleChange: () => void;
+  handleChange: (e: SyntheticEvent) => void;
   isChecked: boolean;
   className?: string;
-  label: string;
+  label?: string;
 }
 
 export const Checkbox = ({
@@ -20,7 +22,7 @@ export const Checkbox = ({
         onChange={handleChange}
         checked={isChecked}
       />
-      <label htmlFor="check">{label}</label>
+      {label && <label htmlFor="check">{label}</label>}
     </div>
   );
 };

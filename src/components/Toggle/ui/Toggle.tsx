@@ -3,7 +3,6 @@ import { Checkbox } from '../../Checkbox';
 interface IProps {
   handleChange: () => void;
   isChecked: boolean;
-  label: string;
 }
 
 export const Toggle = ({ handleChange, isChecked }: IProps): JSX.Element => {
@@ -11,7 +10,7 @@ export const Toggle = ({ handleChange, isChecked }: IProps): JSX.Element => {
     <Checkbox
       handleChange={handleChange}
       isChecked={isChecked}
-      label={isChecked ? 'Dark' : 'Light'}
+      label={'Change theme'}
     />
   );
 };

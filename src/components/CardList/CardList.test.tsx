@@ -4,12 +4,16 @@ import { describe, expect, test } from 'vitest';
 import { CardList } from './ui/CardList';
 import { mockPersonsResponse } from './helpers';
 import { MemoryRouter } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import { store } from '../../redux/store';
 
 describe('Card List:', () => {
   test('Verify that the component renders the specified number of cards.', async () => {
     render(
       <MemoryRouter>
-        <CardList onClick={() => null} persons={mockPersonsResponse} />
+        <Provider store={store}>
+          <CardList onClick={() => null} persons={mockPersonsResponse} />
+        </Provider>
       </MemoryRouter>,
     );
     const cards = screen.getAllByTestId('card');
@@ -19,7 +23,9 @@ describe('Card List:', () => {
   test('Check that an appropriate message is displayed if no cards are present.', async () => {
     render(
       <MemoryRouter>
-        <CardList onClick={() => null} persons={[]} />
+        <Provider store={store}>
+          <CardList onClick={() => null} persons={[]} />
+        </Provider>
       </MemoryRouter>,
     );
 

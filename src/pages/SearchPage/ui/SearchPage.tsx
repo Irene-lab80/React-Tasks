@@ -4,6 +4,7 @@ import { useLocalStorage } from '../../../hooks/useLocalStorage';
 import {
   CardList,
   ErrorButton,
+  Flyout,
   LoaderNew,
   Message,
   Pagination,
@@ -15,6 +16,8 @@ import {
   useGetPeopleQuery,
   useLazyGetPeopleQuery,
 } from '../../../redux/mainApi';
+import { useAppSelector } from '../../../redux/store';
+import { downloadJSONAsCSV } from '../../../utils/utils';
 
 export const SearchPage = () => {
   const params = useParams();
@@ -26,6 +29,10 @@ export const SearchPage = () => {
     'search',
     '',
   );
+
+  const { selectedEntities } = useAppSelector((state) => state.selectPeople);
+
+  const downloadCSV = () => downloadJSONAsCSV(selectedEntities);
 
   const [currentPage, setCurrentPage] = useState(
     params.page ? +params?.page : 1,
@@ -114,6 +121,12 @@ export const SearchPage = () => {
         totalCount={totalCount}
         totalPageCount={totalPageCount}
       />
+      {!!selectedEntities?.length && (
+        <Flyout
+          itemsCount={selectedEntities?.length}
+          onDownload={downloadCSV}
+        />
+      )}
     </div>
   );
 };

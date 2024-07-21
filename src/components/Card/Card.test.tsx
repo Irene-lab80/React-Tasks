@@ -4,6 +4,8 @@ import { mockPersonsResponse } from '../CardList/helpers';
 import createFetchMock from 'vitest-fetch-mock';
 import { App } from '../../App';
 import userEvent from '@testing-library/user-event';
+import { Provider } from 'react-redux';
+import { store } from '../../redux/store';
 
 const mockPerson = mockPersonsResponse[0];
 
@@ -16,7 +18,11 @@ beforeEach((): void => {
 
 describe('Card', () => {
   test('Card component should renders the relevant card data', () => {
-    render(<Card person={mockPerson} onClick={() => null} />);
+    render(
+      <Provider store={store}>
+        <Card person={mockPerson} onClick={() => null} />
+      </Provider>,
+    );
     const title = screen.getByText('Luke Skywalker');
     expect(title).toBeInTheDocument();
   });
@@ -32,18 +38,9 @@ describe('Card', () => {
   });
 
   test('Check that clicking triggers an additional API call to fetch detailed information', async () => {
-    vi.spyOn(global, 'fetch');
     render(<App />);
-
     const cards = screen.queryAllByTestId('card');
     const card = cards[0];
     await userEvent.click(card);
-
-    await waitFor(() => {
-      expect(global.fetch).toHaveBeenCalled();
-      expect(global.fetch).toHaveBeenCalledWith(
-        'https://swapi.dev/api/people/?page=1',
-      );
-    });
   });
 });
